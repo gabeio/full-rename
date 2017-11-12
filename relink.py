@@ -3,7 +3,7 @@ import locale
 import subprocess
 import re
 
-def relink(olduser):
+def relink(olduser, path="/"):
     rex = re.compile(r"\d\d\:\d\d\ (.*)\ \-\>\ (.*)\n")
     # find the new user
     cmd = ["whoami"]
@@ -13,7 +13,7 @@ def relink(olduser):
     print(newuser)
     # find all old (soft) links
     cmd = ['/bin/bash', '-c']
-    cmd.append('find / -type l -ls 2>/dev/null | grep {olduser}'.format(olduser=olduser))
+    cmd.append('find {path} -type l -ls 2>/dev/null | grep {olduser}'.format(olduser=olduser, path=path))
     print(cmd)
     found, error = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()
     print(found)
@@ -33,8 +33,10 @@ def relink(olduser):
 if __name__ == '__main__':
     locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
     parser = argparse.ArgumentParser(description='Re-links olduser home directory to current user\'s home directory.')
+    parser.add_argument('-p', '--path', dest='path',
+                        help='The "highest" location from which you want to search from using `find`.')
     parser.add_argument('-u', '--user', dest='olduser', required=True,
                         help='The old user account which will need to relinked.')
     args = parser.parse_args()
 
-    relink(args.olduser)
+    relink(args.olduser, args.path)
