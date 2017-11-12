@@ -24,7 +24,7 @@ def relink(olduser):
         dest = item[1].replace(olduser, newuser)
         # relink them to the new user
         cmd = ['/bin/bash', '-c']
-        cmd.append('ln -sf \"{origin}\" \"{destination}\"'.format(origin=item[0], destination=dest))
+        cmd.append('ln -nsf \"{destination}\" \"{origin}\"'.format(origin=item[0], destination=dest))
         print(cmd)
         out, error = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()
         print(out)
